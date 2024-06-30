@@ -15,10 +15,6 @@
   <body>
     <div class="container">
       <h3 class="title">To-Do List</h3>
-      <div class="options">
-        <div class="add-note">New Note</div>
-        <div class="search-button">Search</div>
-      </div>
       <div class="control">
         <div class="filter">Filter</div>
         <ul class="filter-box" style="display: none">
@@ -26,7 +22,14 @@
           <li>Checked</li>
           <li>Unchecked</li>
         </ul>
-        <input class="input" type="text" placeholder="Write your note" />
+        <div class="data-box">
+          <input class="input" type="text" placeholder="Write your note" />
+          <div class="options">
+            <div class="add-note actived">New Note</div>
+            <div class="search-button">Search</div>
+          </div>
+        </div>
+
         <div class="sort">Sort</div>
         <ul class="sort-box" style="display: none">
           <li class="active">Newest</li>

@@ -32,43 +32,22 @@ body {
 }
 
 .container .title {
-  margin-bottom: 15px;
+  margin: 5px 0 20px 0;
   font-size: 30px;
-}
-
-.container .options {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 50px;
-  padding: 10px;
-  margin-bottom: 20px;
-}
-
-.container .options .add-note, .container .options .search-button {
-  width: 120px;
-  padding: 10px 20px;
-  border-radius: 10px;
-  cursor: pointer;
-  box-shadow: 4px 3px 6px 1px #1c1c1c, 
-  inset -5px -4px 10px -2px #191a1c, 
-  inset 5px 5px 7px -4px #c3c3c326;
-  text-align: center;
-  background-color: white;
-  color: #2a2d34;
 }
 
 .container .control {
   width: 100%;
   display: flex;
   gap: 15px;
+  margin: 20px 0;
   justify-content: space-evenly;
   align-items: center;
   position: relative;
 }
 
 .container .control .filter, .container .control .sort {
-  padding: 10px 30px;
+  padding: 20px 30px;
   border-radius: 10px;
   cursor: pointer;
   box-shadow: 4px 3px 6px 1px #1c1c1c, 
@@ -87,13 +66,13 @@ body {
   inset -5px -4px 10px -2px #191a1c, 
   inset 5px 5px 7px -4px #c3c3c326;
   background-color: #2a2d34;
-  top: 65px;
+  top: 70px;
   border-radius: 5px;
   overflow: hidden;
 }
 
 .container .control .filter-box {
-  left: 65px;
+  left: 50px;
 }
 
 .container .control .sort-box {
@@ -118,15 +97,45 @@ body {
   border-bottom: 1px solid white;
 }
 
-.container .control .input {
+.container .control .data-box {
+  display: flex;
+  max-width: 80%;
+  min-width: 60%;
+  position: relative;
+  box-shadow: 3px 3px 5px 3px #1d1f25;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.container .control .data-box .input {
   padding: 20px;
-  width: 95%;
-  max-width: 600px;
+  padding-right: 200px;
+  width: 99%;
+  max-width: 650px;
   font-size: 16px;
-  border-radius: 15px;
+  border-radius: 10px;
   border: none;
   outline: none;
   box-shadow: 3px 3px 5px 3px #1d1f25, inset 0px 0px 5px 2px #6d7179;
+}
+
+.container .control .data-box .options {
+  display: flex;
+  position: absolute;
+  right: 0;
+}
+
+.container .control .data-box .options .add-note, .container .control .data-box .options .search-button {
+  width: 100px;
+  padding: 20px 0px;
+  cursor: pointer;
+  box-shadow: inset -5px -4px 10px -2px #191a1c, inset 5px 5px 7px -4px #c3c3c326;
+  text-align: center;
+  background-color: #2a2c33;
+}
+
+.actived {
+  border-left: 4px solid #789ccf;
 }
 
 .container .notes-box {

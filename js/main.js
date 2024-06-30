@@ -4,6 +4,8 @@ let control = document.querySelector(".control");
 let options = document.querySelector(".options");
 let filterBox = document.querySelector(".filter-box");
 let sortBox = document.querySelector(".sort-box");
+let addNote = document.querySelector(".add-note");
+let search = document.querySelector(".search-button");
 let arr = [];
 
 if (localStorage.getItem("notes")) {
@@ -14,24 +16,47 @@ if (localStorage.getItem("notes")) {
 // noData()
 
 options.addEventListener("click", (e) => {
-  if (e.target.classList.contains("add-note")) {
-    addNewNote(e.target);
-  } else if (e.target.classList.contains("search-button")) {
-    searchNote(e.target);
-  }
+  // if (e.target.classList.contains("add-note")) {
+  addToPage(arr)
+  notesFacilities(e.target);
+  // }
+  // else if (e.target.classList.contains("search-button")) {
+  //   addNewNote(e.target);
+  //   searchNote(e.target);
+  // }
 });
 
 control.addEventListener("click", (e) => {
   if (e.target.classList.contains("input")) {
-    e.target.addEventListener("keypress", function (e) {
-      if (e.keyCode == 13 && input.value != "") {
-        addToArray(input.value);
-        input.value = "";
+    if (addNote.classList.contains("actived")) {
+      e.target.addEventListener("keypress", function (e) {
+        if ((input.value != "" && e.keyCode == 13) || e.code == 13) {
+          addToArray(input.value);
+          input.value = "";
 
-        // notesBox.style.display = "grid"
-        // notesBox.style.overflow = "scroll"
-      }
-    });
+          // notesBox.style.display = "grid"
+          // notesBox.style.overflow = "scroll"
+        }
+      });
+    } else if (search.classList.contains("actived")) {
+      let searchArr = [];
+      input.addEventListener("input", function () {
+        if (e.code != 13 && input.value != "") {
+          notesBox.innerHTML = "";
+          let cnt = input.value;
+          arr.forEach((e) => {
+            if (e.content[0].toLowerCase() == cnt[0].toLowerCase()) {
+              searchArr.push(e);
+            }
+          });
+          addToPage(searchArr);
+        } else {
+          searchArr = [];
+          addToPage(arr);
+        }
+      });
+    }
+
     filterBox.style.display = "none";
     sortBox.style.display = "none";
   } else {
@@ -539,6 +564,7 @@ function checkElement(e) {
 
 function openOptions(e) {
   if (e.classList.contains("filter")) {
+    sortBox.style.display = "none";
     if (filterBox.style.display == "none") {
       e.classList.add("clicked");
       e.style.boxShadow =
@@ -558,38 +584,18 @@ function openOptions(e) {
             });
             e.target.classList.add("active");
             addToPage(arr);
-
-            // [...notesBox.children].forEach((e) => {
-            //   e.style.display = "flex";
-            // });
           } else if (e.target.textContent == "Checked") {
             [...filterBox.children].forEach((e) => {
               e.classList.remove("active");
             });
             e.target.classList.add("active");
             addToPage(arr);
-
-            // [...notesBox.children].forEach((e) => {
-            //   if (!e.children[0].children[0].classList.contains("checked")) {
-            //     e.style.display = "none";
-            //   } else {
-            //     e.style.display = "flex";
-            //   }
-            // });
           } else if (e.target.textContent == "Unchecked") {
             [...filterBox.children].forEach((e) => {
               e.classList.remove("active");
             });
             e.target.classList.add("active");
             addToPage(arr);
-
-            // [...notesBox.children].forEach((e) => {
-            //   if (e.children[0].children[0].classList.contains("checked")) {
-            //     e.style.display = "none";
-            //   } else {
-            //     e.style.display = "flex";
-            //   }
-            // });
           }
         }
       });
@@ -605,6 +611,7 @@ function openOptions(e) {
       filterBox.style.display = "none";
     }
   } else if (e.classList.contains("sort")) {
+    filterBox.style.display = "none";
     if (sortBox.style.display == "none") {
       e.classList.add("clicked");
       e.style.boxShadow =
@@ -711,7 +718,7 @@ function removeElement(e) {
     cnt =
       e.target.parentElement.parentElement.parentElement.parentElement
         .children[1].textContent;
-        
+
     e.target.parentElement.parentElement.parentElement.parentElement.remove();
     delNote(cnt);
   }
@@ -733,30 +740,58 @@ function noData() {
   }
 }
 
-function addNewNote(e) {
-  // [...options.children].foreach((ele) => {
-  //   ele.classList.remove("active");
-  // });
+function notesFacilities(e) {
+  [...options.children].forEach((ele) => {
+    ele.classList.remove("actived");
+  });
   e.classList.add("actived");
   e.style.boxShadow =
-    "3px 3px 6px 1px #1c1c1c, inset 5px 8px 10px -2px #2f3033d1";
+    "inset 5px 8px 10px -2px #191a1c, inset -4px -4px 7px -4px #c3c3c326";
 
   setTimeout(() => {
     e.style.boxShadow =
-      "4px 3px 6px 1px #1c1c1c, inset -5px -4px 10px -2px #191a1c";
+      "inset -5px -4px 10px -2px #191a1c, inset 5px 5px 7px -4px #c3c3c326";
   }, 100);
+  input.focus();
+  // if (e.classList.contains("add-note")) {
+  //   input.addEventListener("keypress", function (e) {
+  //     addToPage(arr);
+  //     if ((input.value != "" && e.keyCode == 13) || e.code == 13) {
+  //       addToArray(input.value);
+  //       input.value = "";
+  //     }
+  //   });
+  // } else if (e.classList.contains("search-button")) {
+  //   let searchArr = [];
+  //   input.addEventListener("input", function () {
+  //     if (e.code != 13 && input.value != "") {
+  //       notesBox.innerHTML = "";
+  //       let cnt = [...input.value];
+  //       arr.forEach((e) => {
+  //         if (e.content[0].toLowerCase() == cnt[0].toLowerCase()) {
+  //           searchArr.push(e);
+  //         }
+  //       });
+  //       addToPage(searchArr);
+  //     } else {
+  //       searchArr = [];
+  //       addToPage(arr);
+  //     }
+  //   });
+  // }
 }
 
-function searchNote(e) {
-  // [...options.children].foreach((ele) => {
-  //   ele.classList.remove("actived")
-  // })
-  e.classList.add("actived");
-  e.style.boxShadow =
-    "3px 3px 6px 1px #1c1c1c, inset 5px 8px 10px -2px #2f3033d1";
+// function searchNote(e) {
+//   [...options.children].forEach((ele) => {
+//     ele.classList.remove("actived");
+//   });
+//   e.classList.add("actived");
+//   e.style.boxShadow =
+//     "inset 5px 8px 10px -2px #191a1c, inset -4px -4px 7px -4px #c3c3c326";
 
-  setTimeout(() => {
-    e.style.boxShadow =
-      "4px 3px 6px 1px #1c1c1c, inset -5px -4px 10px -2px #191a1c";
-  }, 100);
-}
+//   setTimeout(() => {
+//     e.style.boxShadow =
+//       "inset -5px -4px 10px -2px #191a1c, inset 5px 5px 7px -4px #c3c3c326";
+//   }, 100);
+//   input.focus();
+// }
