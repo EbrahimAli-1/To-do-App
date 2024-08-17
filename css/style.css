@@ -106,7 +106,13 @@ body {
   overflow: hidden;
 }
 
-.container .control .data-box .input {
+.container .control .data-box .inputs {
+  display: flex;
+  position: relative;
+  width: 100%;
+}
+
+.container .control .data-box .inputs .input {
   padding: 20px;
   padding-right: 200px;
   width: 99%;
@@ -116,6 +122,13 @@ body {
   border: none;
   outline: none;
   box-shadow: 3px 3px 5px 3px #1d1f25, inset 0px 0px 5px 2px #6d7179;
+}
+
+.container .control .data-box .inputs #search {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
 }
 
 .container .control .data-box .options {
@@ -225,6 +238,7 @@ body {
   color: #dfdfdf;
   font-size: 16px;
   padding: 10px;
+  margin: 5px;
 }
 
 .container .notes-box .note-box .note:focus {

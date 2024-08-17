@@ -5,7 +5,8 @@ let options = document.querySelector(".options");
 let filterBox = document.querySelector(".filter-box");
 let sortBox = document.querySelector(".sort-box");
 let addNote = document.querySelector(".add-note");
-let search = document.querySelector(".search-button");
+let searchBtn = document.querySelector(".search-button");
+let searchInput = document.querySelector("#search");
 let arr = [];
 
 // localStorage.clear();
@@ -15,7 +16,7 @@ if (localStorage.getItem("notes")) {
   addToPage(arr);
 }
 
-// noData()
+// noData();
 
 options.addEventListener("click", (e) => {
   addToPage(arr);
@@ -25,7 +26,7 @@ options.addEventListener("click", (e) => {
 control.addEventListener("click", (e) => {
   if (e.target.classList.contains("input")) {
     e.target.addEventListener("keypress", function (e) {
-      if ((input.value != "" && e.keyCode == 13) || e.code == 13) {
+      if (input.value != "" && (e.keyCode == 13 || e.code == 13)) {
         addToArray(input.value);
         input.value = "";
 
@@ -48,7 +49,7 @@ notesBox.addEventListener("click", (e) => {
 
   filterBox.style.display = "none";
   sortBox.style.display = "none";
-  // noData()
+  // noData();
 });
 
 function addToArray(e) {
@@ -58,8 +59,47 @@ function addToArray(e) {
     check: "unchecked",
   };
   arr.unshift(obj);
-  addToLocalStorage(arr);
-  addToPage(arr);
+  [...sortBox.children].map((e) => {
+    if (e.classList.contains("active")) {
+      if (e.textContent == "Newest") {
+        addToLocalStorage(arr);
+        addToPage(arr);
+      } else if (e.textContent == "Oldest") {
+        addToLocalStorage(arr);
+        addToPage(arr.toReversed());
+      } else if (e.textContent == "A - Z") {
+        addToLocalStorage(arr);
+        addToPage(
+          arr.toSorted(function (a, b) {
+            let x = a.content.toLowerCase();
+            let y = b.content.toLowerCase();
+            if (x < y) {
+              return -1;
+            }
+            if (x > y) {
+              return 1;
+            }
+            return 0;
+          })
+        );
+      } else if (e.textContent == "Z - A") {
+        addToLocalStorage(arr);
+        addToPage(
+          arr.toSorted(function (a, b) {
+            let x = a.content.toLowerCase();
+            let y = b.content.toLowerCase();
+            if (x < y) {
+              return 1;
+            }
+            if (x > y) {
+              return -1;
+            }
+            return 0;
+          })
+        );
+      }
+    }
+  });
 }
 
 function addToLocalStorage(arr) {
@@ -432,6 +472,7 @@ function checkElement(e) {
           addToLocalStorage(arr);
         }
       });
+
       [...filterBox.children].forEach((ele) => {
         if (ele.classList.contains("active") && ele.textContent == "Checked") {
           e.target.parentElement.style.display = "none";
@@ -456,6 +497,7 @@ function checkElement(e) {
           addToLocalStorage(arr);
         }
       });
+
       [...filterBox.children].forEach((ele) => {
         if (
           ele.classList.contains("active") &&
@@ -475,6 +517,7 @@ function checkElement(e) {
           addToLocalStorage(arr);
         }
       });
+
       [...filterBox.children].forEach((ele) => {
         if (ele.classList.contains("active") && ele.textContent == "Checked") {
           e.target.parentElement.parentElement.style.display = "none";
@@ -510,6 +553,7 @@ function checkElement(e) {
           addToLocalStorage(arr);
         }
       });
+
       [...filterBox.children].forEach((ele) => {
         if (
           ele.classList.contains("active") &&
@@ -533,6 +577,7 @@ function checkElement(e) {
           addToLocalStorage(arr);
         }
       });
+
       [...filterBox.children].forEach((ele) => {
         if (ele.classList.contains("active") && ele.textContent == "checked") {
           e.target.parentElement.parentElement.parentElement.parentElement.style.display =
@@ -540,245 +585,6 @@ function checkElement(e) {
         }
       });
     }
-  }
-}
-
-function openOptions(e) {
-  if (e.classList.contains("filter")) {
-    sortBox.style.display = "none";
-    if (filterBox.style.display == "none") {
-      e.classList.add("clicked");
-      e.style.boxShadow =
-        "3px 3px 6px 1px #1c1c1c, inset 5px 8px 10px -2px #191a1c, inset -4px -4px 7px -4px #c3c3c326";
-
-      setTimeout(() => {
-        e.style.boxShadow =
-          "4px 3px 6px 1px #1c1c1c, inset -5px -4px 10px -2px #191a1c, inset 5px 5px 7px -4px #c3c3c326";
-      }, 100);
-      filterBox.style.display = "flex";
-
-      filterBox.addEventListener("click", (e) => {
-        if (!e.target.classList.contains("active")) {
-          if (e.target.textContent == "All") {
-            [...filterBox.children].forEach((e) => {
-              e.classList.remove("active");
-            });
-            e.target.classList.add("active");
-            [...sortBox.children].map((e) => {
-              if (e.classList.contains("active")) {
-                if (e.textContent == "Newest") {
-                  addToPage(arr);
-                } else if (e.textContent == "Oldest") {
-                  addToPage(arr.toReversed());
-                } else if (e.textContent == "A - Z") {
-                  addToPage(
-                    arr.toSorted(function (a, b) {
-                      let x = a.content.toLowerCase();
-                      let y = b.content.toLowerCase();
-                      if (x < y) {
-                        return -1;
-                      }
-                      if (x > y) {
-                        return 1;
-                      }
-                      return 0;
-                    })
-                  );
-                } else if (e.textContent == "Z - A") {
-                  addToPage(
-                    arr.toSorted(function (a, b) {
-                      let x = a.content.toLowerCase();
-                      let y = b.content.toLowerCase();
-                      if (x < y) {
-                        return 1;
-                      }
-                      if (x > y) {
-                        return -1;
-                      }
-                      return 0;
-                    })
-                  );
-                }
-              }
-            });
-          } else if (e.target.textContent == "Checked") {
-            [...filterBox.children].forEach((e) => {
-              e.classList.remove("active");
-            });
-            e.target.classList.add("active");
-            [...sortBox.children].map((e) => {
-              if (e.classList.contains("active")) {
-                if (e.textContent == "Newest") {
-                  addToPage(arr);
-                } else if (e.textContent == "Oldest") {
-                  addToPage(arr.toReversed());
-                } else if (e.textContent == "A - Z") {
-                  addToPage(
-                    arr.toSorted(function (a, b) {
-                      let x = a.content.toLowerCase();
-                      let y = b.content.toLowerCase();
-                      if (x < y) {
-                        return -1;
-                      }
-                      if (x > y) {
-                        return 1;
-                      }
-                      return 0;
-                    })
-                  );
-                } else if (e.textContent == "Z - A") {
-                  addToPage(
-                    arr.toSorted(function (a, b) {
-                      let x = a.content.toLowerCase();
-                      let y = b.content.toLowerCase();
-                      if (x < y) {
-                        return 1;
-                      }
-                      if (x > y) {
-                        return -1;
-                      }
-                      return 0;
-                    })
-                  );
-                }
-              }
-            });
-          } else if (e.target.textContent == "Unchecked") {
-            [...filterBox.children].forEach((e) => {
-              e.classList.remove("active");
-            });
-            e.target.classList.add("active");
-            [...sortBox.children].map((e) => {
-              if (e.classList.contains("active")) {
-                if (e.textContent == "Newest") {
-                  addToPage(arr);
-                } else if (e.textContent == "Oldest") {
-                  addToPage(arr.toReversed());
-                } else if (e.textContent == "A - Z") {
-                  addToPage(
-                    arr.toSorted(function (a, b) {
-                      let x = a.content.toLowerCase();
-                      let y = b.content.toLowerCase();
-                      if (x < y) {
-                        return -1;
-                      }
-                      if (x > y) {
-                        return 1;
-                      }
-                      return 0;
-                    })
-                  );
-                } else if (e.textContent == "Z - A") {
-                  addToPage(
-                    arr.toSorted(function (a, b) {
-                      let x = a.content.toLowerCase();
-                      let y = b.content.toLowerCase();
-                      if (x < y) {
-                        return 1;
-                      }
-                      if (x > y) {
-                        return -1;
-                      }
-                      return 0;
-                    })
-                  );
-                }
-              }
-            });
-          }
-        }
-      });
-    } else {
-      e.classList.remove("clicked");
-      e.style.boxShadow =
-        "3px 3px 6px 1px #1c1c1c, inset 5px 8px 10px -2px #191a1c, inset -4px -4px 7px -4px #c3c3c326";
-
-      setTimeout(() => {
-        e.style.boxShadow =
-          "4px 3px 6px 1px #1c1c1c, inset -5px -4px 10px -2px #191a1c, inset 5px 5px 7px -4px #c3c3c326";
-      }, 100);
-      filterBox.style.display = "none";
-    }
-  } else if (e.classList.contains("sort")) {
-    filterBox.style.display = "none";
-    if (sortBox.style.display == "none") {
-      e.classList.add("clicked");
-      e.style.boxShadow =
-        "3px 3px 6px 1px #1c1c1c, inset 5px 8px 10px -2px #191a1c, inset -4px -4px 7px -4px #c3c3c326";
-
-      setTimeout(() => {
-        e.style.boxShadow =
-          "4px 3px 6px 1px #1c1c1c, inset -5px -4px 10px -2px #191a1c, inset 5px 5px 7px -4px #c3c3c326";
-      }, 100);
-      sortBox.style.display = "flex";
-      sortBox.addEventListener("click", (e) => {
-        if (!e.target.classList.contains("active")) {
-          if (e.target.textContent == "Newest") {
-            [...sortBox.children].forEach((e) => {
-              e.classList.remove("active");
-            });
-            addToPage(arr);
-            e.target.classList.add("active");
-          } else if (e.target.textContent == "Oldest") {
-            [...sortBox.children].forEach((e) => {
-              e.classList.remove("active");
-            });
-            e.target.classList.add("active");
-            addToPage(arr.toReversed());
-          } else if (e.target.textContent == "A - Z") {
-            [...sortBox.children].forEach((e) => {
-              e.classList.remove("active");
-            });
-
-            addToPage(
-              arr.toSorted(function (a, b) {
-                let x = a.content.toLowerCase();
-                let y = b.content.toLowerCase();
-                if (x < y) {
-                  return -1;
-                }
-                if (x > y) {
-                  return 1;
-                }
-                return 0;
-              })
-            );
-            e.target.classList.add("active");
-          } else if (e.target.textContent == "Z - A") {
-            [...sortBox.children].forEach((e) => {
-              e.classList.remove("active");
-            });
-            addToPage(
-              arr.toSorted(function (a, b) {
-                let x = a.content.toLowerCase();
-                let y = b.content.toLowerCase();
-                if (x < y) {
-                  return 1;
-                }
-                if (x > y) {
-                  return -1;
-                }
-                return 0;
-              })
-            );
-            e.target.classList.add("active");
-          }
-        }
-      });
-    } else {
-      e.classList.remove("clicked");
-      e.style.boxShadow =
-        "3px 3px 6px 1px #1c1c1c, inset 5px 8px 10px -2px #191a1c, inset -4px -4px 7px -4px #c3c3c326";
-
-      setTimeout(() => {
-        e.style.boxShadow =
-          "4px 3px 6px 1px #1c1c1c, inset -5px -4px 10px -2px #191a1c, inset 5px 5px 7px -4px #c3c3c326";
-      }, 100);
-      sortBox.style.display = "none";
-    }
-  } else {
-    filterBox.style.display = "none";
-    sortBox.style.display = "none";
   }
 }
 
@@ -805,160 +611,1078 @@ function removeElement(e) {
 
 function delNote(cnt) {
   arr = arr.filter((task) => task.content != cnt);
+  searchArr = searchArr.filter((task) => task.content != cnt);
   [...sortBox.children].map((e) => {
     if (e.classList.contains("active")) {
-      if (e.textContent == "Newest") {
-        addToLocalStorage(arr);
-        addToPage(arr);
-      } else if (e.textContent == "Oldest") {
-        addToLocalStorage(arr);
-        addToPage(arr.toReversed());
-      } else if (e.textContent == "A - Z") {
-        addToLocalStorage(arr);
-        addToPage(
-          arr.toSorted(function (a, b) {
-            let x = a.content.toLowerCase();
-            let y = b.content.toLowerCase();
-            if (x < y) {
-              return -1;
-            }
-            if (x > y) {
-              return 1;
-            }
-            return 0;
-          })
-        );
-      } else if (e.textContent == "Z - A") {
-        addToLocalStorage(arr);
-        addToPage(
-          arr.toSorted(function (a, b) {
-            let x = a.content.toLowerCase();
-            let y = b.content.toLowerCase();
-            if (x < y) {
-              return 1;
-            }
-            if (x > y) {
-              return -1;
-            }
-            return 0;
-          })
-        );
+      if (addNote.classList.contains("actived")) {
+        if (e.textContent == "Newest") {
+          addToLocalStorage(arr);
+          addToPage(arr);
+        } else if (e.textContent == "Oldest") {
+          addToLocalStorage(arr);
+          addToPage(arr.toReversed());
+        } else if (e.textContent == "A - Z") {
+          addToLocalStorage(arr);
+          addToPage(
+            arr.toSorted(function (a, b) {
+              let x = a.content.toLowerCase();
+              let y = b.content.toLowerCase();
+              if (x < y) {
+                return -1;
+              }
+              if (x > y) {
+                return 1;
+              }
+              return 0;
+            })
+          );
+        } else if (e.textContent == "Z - A") {
+          addToLocalStorage(arr);
+          addToPage(
+            arr.toSorted(function (a, b) {
+              let x = a.content.toLowerCase();
+              let y = b.content.toLowerCase();
+              if (x < y) {
+                return 1;
+              }
+              if (x > y) {
+                return -1;
+              }
+              return 0;
+            })
+          );
+        }
+      } else {
+        if (e.textContent == "Newest") {
+          addToLocalStorage(arr);
+          addToPage(searchArr);
+        } else if (e.textContent == "Oldest") {
+          addToLocalStorage(arr);
+          addToPage(searchArr.toReversed());
+        } else if (e.textContent == "A - Z") {
+          addToLocalStorage(arr);
+          addToPage(
+            searchArr.toSorted(function (a, b) {
+              let x = a.content.toLowerCase();
+              let y = b.content.toLowerCase();
+              if (x < y) {
+                return -1;
+              }
+              if (x > y) {
+                return 1;
+              }
+              return 0;
+            })
+          );
+        } else if (e.textContent == "Z - A") {
+          addToLocalStorage(arr);
+          addToPage(
+            searchArr.toSorted(function (a, b) {
+              let x = a.content.toLowerCase();
+              let y = b.content.toLowerCase();
+              if (x < y) {
+                return 1;
+              }
+              if (x > y) {
+                return -1;
+              }
+              return 0;
+            })
+          );
+        }
       }
     }
   });
 }
 
 function editElement(e) {
-  if (e.target.classList.contains("edit")) {
-    let note = e.target.parentElement.parentElement.children[1];
-    note.removeAttribute("readonly");
-    note.focus();
-    // note.style.backgroundColor = "#789ccf";
-    let noteValue = note.value;
-    note.addEventListener("keypress", function (e) {
-      if (e.code == 13 || e.keyCode == 13) {
-        note.blur();
-      }
-    });
-    note.onblur = function () {
-      note.setAttribute("readonly", "");
-      note.style.backgroundColor = "transparent";
-      arr.map((e) => {
-        if (e.content == noteValue) {
-          e.content = note.value;
+  if (addNote.classList.contains("actived")) {
+    if (e.target.classList.contains("edit")) {
+      let note = e.target.parentElement.parentElement.children[1];
+      note.removeAttribute("readonly");
+      note.focus();
+      // note.style.backgroundColor = "#789ccf";
+      let noteValue = note.value;
+      note.addEventListener("keypress", function (e) {
+        if (e.code == 13 || e.keyCode == 13) {
+          note.blur();
         }
       });
-      addToLocalStorage(arr);
-      addToPage(arr);
-    };
-  } else if (e.target.parentElement.classList.contains("edit")) {
-    let note = e.target.parentElement.parentElement.parentElement.children[1];
-    note.removeAttribute("readonly");
-    note.focus();
-    // note.style.backgroundColor = "#789ccf";
-    let noteValue = note.value;
-    note.addEventListener("keypress", function (e) {
-      if (e.code == 13 || e.keyCode == 13) {
-        note.blur();
-      }
-    });
-    note.onblur = function () {
-      note.setAttribute("readonly", "");
-      note.style.backgroundColor = "transparent";
-      arr.map((e) => {
-        if (e.content == noteValue) {
-          e.content = note.value;
+      note.onblur = function () {
+        note.setAttribute("readonly", "");
+        note.style.backgroundColor = "transparent";
+        arr.map((e) => {
+          if (e.content == noteValue) {
+            e.content = note.value;
+          }
+        });
+        addToLocalStorage(arr);
+        [...sortBox.children].map((e) => {
+          if (e.classList.contains("active")) {
+            if (e.textContent == "Newest") {
+              addToPage(arr);
+            } else if (e.textContent == "Oldest") {
+              addToPage(arr.toReversed());
+            } else if (e.textContent == "A - Z") {
+              addToPage(
+                arr.toSorted(function (a, b) {
+                  let x = a.content.toLowerCase();
+                  let y = b.content.toLowerCase();
+                  if (x < y) {
+                    return -1;
+                  }
+                  if (x > y) {
+                    return 1;
+                  }
+                  return 0;
+                })
+              );
+            } else if (e.textContent == "Z - A") {
+              addToPage(
+                arr.toSorted(function (a, b) {
+                  let x = a.content.toLowerCase();
+                  let y = b.content.toLowerCase();
+                  if (x < y) {
+                    return 1;
+                  }
+                  if (x > y) {
+                    return -1;
+                  }
+                  return 0;
+                })
+              );
+            }
+          }
+        });
+      };
+    } else if (e.target.parentElement.classList.contains("edit")) {
+      let note = e.target.parentElement.parentElement.parentElement.children[1];
+      note.removeAttribute("readonly");
+      note.focus();
+      // note.style.backgroundColor = "#789ccf";
+      let noteValue = note.value;
+      note.addEventListener("keypress", function (e) {
+        if (e.code == 13 || e.keyCode == 13) {
+          note.blur();
         }
       });
-      addToLocalStorage(arr);
-      addToPage(arr);
-    };
-  } else if (e.target.parentElement.parentElement.classList.contains("edit")) {
-    let note =
-      e.target.parentElement.parentElement.parentElement.parentElement
-        .children[1];
-    note.removeAttribute("readonly");
-    note.focus();
-    // note.style.backgroundColor = "#789ccf";
-    let noteValue = note.value;
-    note.addEventListener("keypress", function (e) {
-      if (e.code == 13 || e.keyCode == 13) {
-        note.blur();
-      }
-    });
-    note.onblur = function () {
-      note.setAttribute("readonly", "");
-      note.style.backgroundColor = "transparent";
-      arr.map((e) => {
-        if (e.content == noteValue) {
-          e.content = note.value;
+      note.onblur = function () {
+        note.setAttribute("readonly", "");
+        note.style.backgroundColor = "transparent";
+        arr.map((e) => {
+          if (e.content == noteValue) {
+            e.content = note.value;
+          }
+        });
+        addToLocalStorage(arr);
+        [...sortBox.children].map((e) => {
+          if (e.classList.contains("active")) {
+            if (e.textContent == "Newest") {
+              addToPage(arr);
+            } else if (e.textContent == "Oldest") {
+              addToPage(arr.toReversed());
+            } else if (e.textContent == "A - Z") {
+              addToPage(
+                arr.toSorted(function (a, b) {
+                  let x = a.content.toLowerCase();
+                  let y = b.content.toLowerCase();
+                  if (x < y) {
+                    return -1;
+                  }
+                  if (x > y) {
+                    return 1;
+                  }
+                  return 0;
+                })
+              );
+            } else if (e.textContent == "Z - A") {
+              addToPage(
+                arr.toSorted(function (a, b) {
+                  let x = a.content.toLowerCase();
+                  let y = b.content.toLowerCase();
+                  if (x < y) {
+                    return 1;
+                  }
+                  if (x > y) {
+                    return -1;
+                  }
+                  return 0;
+                })
+              );
+            }
+          }
+        });
+      };
+    } else if (
+      e.target.parentElement.parentElement.classList.contains("edit")
+    ) {
+      let note =
+        e.target.parentElement.parentElement.parentElement.parentElement
+          .children[1];
+      note.removeAttribute("readonly");
+      note.focus();
+      // note.style.backgroundColor = "#789ccf";
+      let noteValue = note.value;
+      note.addEventListener("keypress", function (e) {
+        if (e.code == 13 || e.keyCode == 13) {
+          note.blur();
         }
       });
-      addToLocalStorage(arr);
-      addToPage(arr);
-    };
-  } else if (
-    e.target.parentElement.parentElement.parentElement.classList.contains(
-      "edit"
-    )
-  ) {
-    let note =
-      e.target.parentElement.parentElement.parentElement.parentElement
-        .parentElement.children[1];
-    note.removeAttribute("readonly");
-    note.focus();
-    // note.style.backgroundColor = "#789ccf";
-    let noteValue = note.value;
-    note.addEventListener("keypress", function (e) {
-      if (e.code == 13 || e.keyCode == 13) {
-        note.blur();
-      }
-    });
-    note.onblur = function () {
-      note.setAttribute("readonly", "");
-      note.style.backgroundColor = "transparent";
-      arr.map((e) => {
-        if (e.content == noteValue) {
-          e.content = note.value;
+      note.onblur = function () {
+        note.setAttribute("readonly", "");
+        note.style.backgroundColor = "transparent";
+        arr.map((e) => {
+          if (e.content == noteValue) {
+            e.content = note.value;
+          }
+        });
+        addToLocalStorage(arr);
+        [...sortBox.children].map((e) => {
+          if (e.classList.contains("active")) {
+            if (e.textContent == "Newest") {
+              addToPage(arr);
+            } else if (e.textContent == "Oldest") {
+              addToPage(arr.toReversed());
+            } else if (e.textContent == "A - Z") {
+              addToPage(
+                arr.toSorted(function (a, b) {
+                  let x = a.content.toLowerCase();
+                  let y = b.content.toLowerCase();
+                  if (x < y) {
+                    return -1;
+                  }
+                  if (x > y) {
+                    return 1;
+                  }
+                  return 0;
+                })
+              );
+            } else if (e.textContent == "Z - A") {
+              addToPage(
+                arr.toSorted(function (a, b) {
+                  let x = a.content.toLowerCase();
+                  let y = b.content.toLowerCase();
+                  if (x < y) {
+                    return 1;
+                  }
+                  if (x > y) {
+                    return -1;
+                  }
+                  return 0;
+                })
+              );
+            }
+          }
+        });
+      };
+    } else if (
+      e.target.parentElement.parentElement.parentElement.classList.contains(
+        "edit"
+      )
+    ) {
+      let note =
+        e.target.parentElement.parentElement.parentElement.parentElement
+          .parentElement.children[1];
+      note.removeAttribute("readonly");
+      note.focus();
+      // note.style.backgroundColor = "#789ccf";
+      let noteValue = note.value;
+      note.addEventListener("keypress", function (e) {
+        if (e.code == 13 || e.keyCode == 13) {
+          note.blur();
         }
       });
-      addToLocalStorage(arr);
-      addToPage(arr);
-    };
+      note.onblur = function () {
+        note.setAttribute("readonly", "");
+        note.style.backgroundColor = "transparent";
+        arr.map((e) => {
+          if (e.content == noteValue) {
+            e.content = note.value;
+          }
+        });
+        addToLocalStorage(arr);
+        [...sortBox.children].map((e) => {
+          if (e.classList.contains("active")) {
+            if (e.textContent == "Newest") {
+              addToPage(arr);
+            } else if (e.textContent == "Oldest") {
+              addToPage(arr.toReversed());
+            } else if (e.textContent == "A - Z") {
+              addToPage(
+                arr.toSorted(function (a, b) {
+                  let x = a.content.toLowerCase();
+                  let y = b.content.toLowerCase();
+                  if (x < y) {
+                    return -1;
+                  }
+                  if (x > y) {
+                    return 1;
+                  }
+                  return 0;
+                })
+              );
+            } else if (e.textContent == "Z - A") {
+              addToPage(
+                arr.toSorted(function (a, b) {
+                  let x = a.content.toLowerCase();
+                  let y = b.content.toLowerCase();
+                  if (x < y) {
+                    return 1;
+                  }
+                  if (x > y) {
+                    return -1;
+                  }
+                  return 0;
+                })
+              );
+            }
+          }
+        });
+      };
+    }
+  } else {
+    if (e.target.classList.contains("edit")) {
+      let note = e.target.parentElement.parentElement.children[1];
+      note.removeAttribute("readonly");
+      note.focus();
+      // note.style.backgroundColor = "#789ccf";
+      let noteValue = note.value;
+      note.addEventListener("keypress", function (e) {
+        if (e.code == 13 || e.keyCode == 13) {
+          note.blur();
+        }
+      });
+      note.onblur = function () {
+        note.setAttribute("readonly", "");
+        note.style.backgroundColor = "transparent";
+        arr.map((e) => {
+          if (e.content == noteValue) {
+            e.content = note.value;
+          }
+        });
+        addToLocalStorage(arr);
+        [...sortBox.children].map((e) => {
+          if (e.classList.contains("active")) {
+            if (e.textContent == "Newest") {
+              addToLocalStorage(arr);
+              addToPage(searchArr);
+            } else if (e.textContent == "Oldest") {
+              addToLocalStorage(arr);
+              addToPage(searchArr.toReversed());
+            } else if (e.textContent == "A - Z") {
+              addToLocalStorage(arr);
+              addToPage(
+                searchArr.toSorted(function (a, b) {
+                  let x = a.content.toLowerCase();
+                  let y = b.content.toLowerCase();
+                  if (x < y) {
+                    return -1;
+                  }
+                  if (x > y) {
+                    return 1;
+                  }
+                  return 0;
+                })
+              );
+            } else if (e.textContent == "Z - A") {
+              addToLocalStorage(arr);
+              addToPage(
+                searchArr.toSorted(function (a, b) {
+                  let x = a.content.toLowerCase();
+                  let y = b.content.toLowerCase();
+                  if (x < y) {
+                    return 1;
+                  }
+                  if (x > y) {
+                    return -1;
+                  }
+                  return 0;
+                })
+              );
+            }
+          }
+        });
+      };
+    } else if (e.target.parentElement.classList.contains("edit")) {
+      let note = e.target.parentElement.parentElement.parentElement.children[1];
+      note.removeAttribute("readonly");
+      note.focus();
+      // note.style.backgroundColor = "#789ccf";
+      let noteValue = note.value;
+      note.addEventListener("keypress", function (e) {
+        if (e.code == 13 || e.keyCode == 13) {
+          note.blur();
+        }
+      });
+      note.onblur = function () {
+        note.setAttribute("readonly", "");
+        note.style.backgroundColor = "transparent";
+        arr.map((e) => {
+          if (e.content == noteValue) {
+            e.content = note.value;
+          }
+        });
+        addToLocalStorage(arr);
+        [...sortBox.children].map((e) => {
+          if (e.classList.contains("active")) {
+            if (e.textContent == "Newest") {
+              addToLocalStorage(arr);
+              addToPage(searchArr);
+            } else if (e.textContent == "Oldest") {
+              addToLocalStorage(arr);
+              addToPage(searchArr.toReversed());
+            } else if (e.textContent == "A - Z") {
+              addToLocalStorage(arr);
+              addToPage(
+                searchArr.toSorted(function (a, b) {
+                  let x = a.content.toLowerCase();
+                  let y = b.content.toLowerCase();
+                  if (x < y) {
+                    return -1;
+                  }
+                  if (x > y) {
+                    return 1;
+                  }
+                  return 0;
+                })
+              );
+            } else if (e.textContent == "Z - A") {
+              addToLocalStorage(arr);
+              addToPage(
+                searchArr.toSorted(function (a, b) {
+                  let x = a.content.toLowerCase();
+                  let y = b.content.toLowerCase();
+                  if (x < y) {
+                    return 1;
+                  }
+                  if (x > y) {
+                    return -1;
+                  }
+                  return 0;
+                })
+              );
+            }
+          }
+        });
+      };
+    } else if (
+      e.target.parentElement.parentElement.classList.contains("edit")
+    ) {
+      let note =
+        e.target.parentElement.parentElement.parentElement.parentElement
+          .children[1];
+      note.removeAttribute("readonly");
+      note.focus();
+      // note.style.backgroundColor = "#789ccf";
+      let noteValue = note.value;
+      note.addEventListener("keypress", function (e) {
+        if (e.code == 13 || e.keyCode == 13) {
+          note.blur();
+        }
+      });
+      note.onblur = function () {
+        note.setAttribute("readonly", "");
+        note.style.backgroundColor = "transparent";
+        arr.map((e) => {
+          if (e.content == noteValue) {
+            e.content = note.value;
+          }
+        });
+        addToLocalStorage(arr);
+        [...sortBox.children].map((e) => {
+          if (e.classList.contains("active")) {
+            if (e.textContent == "Newest") {
+              addToLocalStorage(arr);
+              addToPage(searchArr);
+            } else if (e.textContent == "Oldest") {
+              addToLocalStorage(arr);
+              addToPage(searchArr.toReversed());
+            } else if (e.textContent == "A - Z") {
+              addToLocalStorage(arr);
+              addToPage(
+                searchArr.toSorted(function (a, b) {
+                  let x = a.content.toLowerCase();
+                  let y = b.content.toLowerCase();
+                  if (x < y) {
+                    return -1;
+                  }
+                  if (x > y) {
+                    return 1;
+                  }
+                  return 0;
+                })
+              );
+            } else if (e.textContent == "Z - A") {
+              addToLocalStorage(arr);
+              addToPage(
+                searchArr.toSorted(function (a, b) {
+                  let x = a.content.toLowerCase();
+                  let y = b.content.toLowerCase();
+                  if (x < y) {
+                    return 1;
+                  }
+                  if (x > y) {
+                    return -1;
+                  }
+                  return 0;
+                })
+              );
+            }
+          }
+        });
+      };
+    } else if (
+      e.target.parentElement.parentElement.parentElement.classList.contains(
+        "edit"
+      )
+    ) {
+      let note =
+        e.target.parentElement.parentElement.parentElement.parentElement
+          .parentElement.children[1];
+      note.removeAttribute("readonly");
+      note.focus();
+      // note.style.backgroundColor = "#789ccf";
+      let noteValue = note.value;
+      note.addEventListener("keypress", function (e) {
+        if (e.code == 13 || e.keyCode == 13) {
+          note.blur();
+        }
+      });
+      note.onblur = function () {
+        note.setAttribute("readonly", "");
+        note.style.backgroundColor = "transparent";
+        arr.map((e) => {
+          if (e.content == noteValue) {
+            e.content = note.value;
+          }
+        });
+        addToLocalStorage(arr);
+        [...sortBox.children].map((e) => {
+          if (e.classList.contains("active")) {
+            if (e.textContent == "Newest") {
+              addToLocalStorage(arr);
+              addToPage(searchArr);
+            } else if (e.textContent == "Oldest") {
+              addToLocalStorage(arr);
+              addToPage(searchArr.toReversed());
+            } else if (e.textContent == "A - Z") {
+              addToLocalStorage(arr);
+              addToPage(
+                searchArr.toSorted(function (a, b) {
+                  let x = a.content.toLowerCase();
+                  let y = b.content.toLowerCase();
+                  if (x < y) {
+                    return -1;
+                  }
+                  if (x > y) {
+                    return 1;
+                  }
+                  return 0;
+                })
+              );
+            } else if (e.textContent == "Z - A") {
+              addToLocalStorage(arr);
+              addToPage(
+                searchArr.toSorted(function (a, b) {
+                  let x = a.content.toLowerCase();
+                  let y = b.content.toLowerCase();
+                  if (x < y) {
+                    return 1;
+                  }
+                  if (x > y) {
+                    return -1;
+                  }
+                  return 0;
+                })
+              );
+            }
+          }
+        });
+      };
+    }
   }
 }
 
-// function noData() {
-//   if (arr.length == 0) {
-//     notesBox.innerHTML = '<h4 class="none">No Notes To Show</h4>';
-//     notesBox.style.display = "block";
-//     notesBox.style.overflow = "visible";
-//   } else {
-//     notesBox.style.display = "grid";
-//     notesBox.style.overflow = "scroll";
-//   }
-// }
+function openOptions(e) {
+  if (addNote.classList.contains("actived")) {
+    if (e.classList.contains("filter")) {
+      sortBox.style.display = "none";
+      if (filterBox.style.display == "none") {
+        e.classList.add("clicked");
+        e.style.boxShadow =
+          "3px 3px 6px 1px #1c1c1c, inset 5px 8px 10px -2px #191a1c, inset -4px -4px 7px -4px #c3c3c326";
 
+        setTimeout(() => {
+          e.style.boxShadow =
+            "4px 3px 6px 1px #1c1c1c, inset -5px -4px 10px -2px #191a1c, inset 5px 5px 7px -4px #c3c3c326";
+        }, 100);
+        filterBox.style.display = "flex";
+
+        filterBox.addEventListener("click", (e) => {
+          if (!e.target.classList.contains("active")) {
+            if (e.target.textContent == "All") {
+              [...filterBox.children].forEach((e) => {
+                e.classList.remove("active");
+              });
+              e.target.classList.add("active");
+              [...sortBox.children].map((e) => {
+                if (e.classList.contains("active")) {
+                  if (e.textContent == "Newest") {
+                    addToPage(arr);
+                  } else if (e.textContent == "Oldest") {
+                    addToPage(arr.toReversed());
+                  } else if (e.textContent == "A - Z") {
+                    addToPage(
+                      arr.toSorted(function (a, b) {
+                        let x = a.content.toLowerCase();
+                        let y = b.content.toLowerCase();
+                        if (x < y) {
+                          return -1;
+                        }
+                        if (x > y) {
+                          return 1;
+                        }
+                        return 0;
+                      })
+                    );
+                  } else if (e.textContent == "Z - A") {
+                    addToPage(
+                      arr.toSorted(function (a, b) {
+                        let x = a.content.toLowerCase();
+                        let y = b.content.toLowerCase();
+                        if (x < y) {
+                          return 1;
+                        }
+                        if (x > y) {
+                          return -1;
+                        }
+                        return 0;
+                      })
+                    );
+                  }
+                }
+              });
+            } else if (e.target.textContent == "Checked") {
+              [...filterBox.children].forEach((e) => {
+                e.classList.remove("active");
+              });
+              e.target.classList.add("active");
+              [...sortBox.children].map((e) => {
+                if (e.classList.contains("active")) {
+                  if (e.textContent == "Newest") {
+                    addToPage(arr);
+                  } else if (e.textContent == "Oldest") {
+                    addToPage(arr.toReversed());
+                  } else if (e.textContent == "A - Z") {
+                    addToPage(
+                      arr.toSorted(function (a, b) {
+                        let x = a.content.toLowerCase();
+                        let y = b.content.toLowerCase();
+                        if (x < y) {
+                          return -1;
+                        }
+                        if (x > y) {
+                          return 1;
+                        }
+                        return 0;
+                      })
+                    );
+                  } else if (e.textContent == "Z - A") {
+                    addToPage(
+                      arr.toSorted(function (a, b) {
+                        let x = a.content.toLowerCase();
+                        let y = b.content.toLowerCase();
+                        if (x < y) {
+                          return 1;
+                        }
+                        if (x > y) {
+                          return -1;
+                        }
+                        return 0;
+                      })
+                    );
+                  }
+                }
+              });
+            } else if (e.target.textContent == "Unchecked") {
+              [...filterBox.children].forEach((e) => {
+                e.classList.remove("active");
+              });
+              e.target.classList.add("active");
+              [...sortBox.children].map((e) => {
+                if (e.classList.contains("active")) {
+                  if (e.textContent == "Newest") {
+                    addToPage(arr);
+                  } else if (e.textContent == "Oldest") {
+                    addToPage(arr.toReversed());
+                  } else if (e.textContent == "A - Z") {
+                    addToPage(
+                      arr.toSorted(function (a, b) {
+                        let x = a.content.toLowerCase();
+                        let y = b.content.toLowerCase();
+                        if (x < y) {
+                          return -1;
+                        }
+                        if (x > y) {
+                          return 1;
+                        }
+                        return 0;
+                      })
+                    );
+                  } else if (e.textContent == "Z - A") {
+                    addToPage(
+                      arr.toSorted(function (a, b) {
+                        let x = a.content.toLowerCase();
+                        let y = b.content.toLowerCase();
+                        if (x < y) {
+                          return 1;
+                        }
+                        if (x > y) {
+                          return -1;
+                        }
+                        return 0;
+                      })
+                    );
+                  }
+                }
+              });
+            }
+          }
+        });
+      } else {
+        e.classList.remove("clicked");
+        e.style.boxShadow =
+          "3px 3px 6px 1px #1c1c1c, inset 5px 8px 10px -2px #191a1c, inset -4px -4px 7px -4px #c3c3c326";
+
+        setTimeout(() => {
+          e.style.boxShadow =
+            "4px 3px 6px 1px #1c1c1c, inset -5px -4px 10px -2px #191a1c, inset 5px 5px 7px -4px #c3c3c326";
+        }, 100);
+        filterBox.style.display = "none";
+      }
+    } else if (e.classList.contains("sort")) {
+      filterBox.style.display = "none";
+      if (sortBox.style.display == "none") {
+        e.classList.add("clicked");
+        e.style.boxShadow =
+          "3px 3px 6px 1px #1c1c1c, inset 5px 8px 10px -2px #191a1c, inset -4px -4px 7px -4px #c3c3c326";
+
+        setTimeout(() => {
+          e.style.boxShadow =
+            "4px 3px 6px 1px #1c1c1c, inset -5px -4px 10px -2px #191a1c, inset 5px 5px 7px -4px #c3c3c326";
+        }, 100);
+        sortBox.style.display = "flex";
+        sortBox.addEventListener("click", (e) => {
+          if (!e.target.classList.contains("active")) {
+            if (e.target.textContent == "Newest") {
+              [...sortBox.children].forEach((e) => {
+                e.classList.remove("active");
+              });
+              addToPage(arr);
+              e.target.classList.add("active");
+            } else if (e.target.textContent == "Oldest") {
+              [...sortBox.children].forEach((e) => {
+                e.classList.remove("active");
+              });
+              addToPage(arr.toReversed());
+              e.target.classList.add("active");
+            } else if (e.target.textContent == "A - Z") {
+              [...sortBox.children].forEach((e) => {
+                e.classList.remove("active");
+              });
+
+              addToPage(
+                arr.toSorted(function (a, b) {
+                  let x = a.content.toLowerCase();
+                  let y = b.content.toLowerCase();
+                  if (x < y) {
+                    return -1;
+                  }
+                  if (x > y) {
+                    return 1;
+                  }
+                  return 0;
+                })
+              );
+              e.target.classList.add("active");
+            } else if (e.target.textContent == "Z - A") {
+              [...sortBox.children].forEach((e) => {
+                e.classList.remove("active");
+              });
+              addToPage(
+                arr.toSorted(function (a, b) {
+                  let x = a.content.toLowerCase();
+                  let y = b.content.toLowerCase();
+                  if (x < y) {
+                    return 1;
+                  }
+                  if (x > y) {
+                    return -1;
+                  }
+                  return 0;
+                })
+              );
+              e.target.classList.add("active");
+            }
+          }
+        });
+      } else {
+        e.classList.remove("clicked");
+        e.style.boxShadow =
+          "3px 3px 6px 1px #1c1c1c, inset 5px 8px 10px -2px #191a1c, inset -4px -4px 7px -4px #c3c3c326";
+
+        setTimeout(() => {
+          e.style.boxShadow =
+            "4px 3px 6px 1px #1c1c1c, inset -5px -4px 10px -2px #191a1c, inset 5px 5px 7px -4px #c3c3c326";
+        }, 100);
+        sortBox.style.display = "none";
+      }
+    } else {
+      filterBox.style.display = "none";
+      sortBox.style.display = "none";
+    }
+  } else {
+    if (e.classList.contains("filter")) {
+      sortBox.style.display = "none";
+      if (filterBox.style.display == "none") {
+        e.classList.add("clicked");
+        e.style.boxShadow =
+          "3px 3px 6px 1px #1c1c1c, inset 5px 8px 10px -2px #191a1c, inset -4px -4px 7px -4px #c3c3c326";
+
+        setTimeout(() => {
+          e.style.boxShadow =
+            "4px 3px 6px 1px #1c1c1c, inset -5px -4px 10px -2px #191a1c, inset 5px 5px 7px -4px #c3c3c326";
+        }, 100);
+        filterBox.style.display = "flex";
+
+        filterBox.addEventListener("click", (e) => {
+          if (!e.target.classList.contains("active")) {
+            if (e.target.textContent == "All") {
+              [...filterBox.children].forEach((e) => {
+                e.classList.remove("active");
+              });
+              e.target.classList.add("active");
+              [...sortBox.children].map((e) => {
+                if (e.classList.contains("active")) {
+                  if (e.textContent == "Newest") {
+                    addToPage(searchArr);
+                  } else if (e.textContent == "Oldest") {
+                    addToPage(searchArr.toReversed());
+                  } else if (e.textContent == "A - Z") {
+                    addToPage(
+                      searchArr.toSorted(function (a, b) {
+                        let x = a.content.toLowerCase();
+                        let y = b.content.toLowerCase();
+                        if (x < y) {
+                          return -1;
+                        }
+                        if (x > y) {
+                          return 1;
+                        }
+                        return 0;
+                      })
+                    );
+                  } else if (e.textContent == "Z - A") {
+                    addToPage(
+                      searchArr.toSorted(function (a, b) {
+                        let x = a.content.toLowerCase();
+                        let y = b.content.toLowerCase();
+                        if (x < y) {
+                          return 1;
+                        }
+                        if (x > y) {
+                          return -1;
+                        }
+                        return 0;
+                      })
+                    );
+                  }
+                }
+              });
+            } else if (e.target.textContent == "Checked") {
+              [...filterBox.children].forEach((e) => {
+                e.classList.remove("active");
+              });
+              e.target.classList.add("active");
+              [...sortBox.children].map((e) => {
+                if (e.classList.contains("active")) {
+                  if (e.textContent == "Newest") {
+                    addToPage(searchArr);
+                  } else if (e.textContent == "Oldest") {
+                    addToPage(searchArr.toReversed());
+                  } else if (e.textContent == "A - Z") {
+                    addToPage(
+                      searchArr.toSorted(function (a, b) {
+                        let x = a.content.toLowerCase();
+                        let y = b.content.toLowerCase();
+                        if (x < y) {
+                          return -1;
+                        }
+                        if (x > y) {
+                          return 1;
+                        }
+                        return 0;
+                      })
+                    );
+                  } else if (e.textContent == "Z - A") {
+                    addToPage(
+                      searchArr.toSorted(function (a, b) {
+                        let x = a.content.toLowerCase();
+                        let y = b.content.toLowerCase();
+                        if (x < y) {
+                          return 1;
+                        }
+                        if (x > y) {
+                          return -1;
+                        }
+                        return 0;
+                      })
+                    );
+                  }
+                }
+              });
+            } else if (e.target.textContent == "Unchecked") {
+              [...filterBox.children].forEach((e) => {
+                e.classList.remove("active");
+              });
+              e.target.classList.add("active");
+              [...sortBox.children].map((e) => {
+                if (e.classList.contains("active")) {
+                  if (e.textContent == "Newest") {
+                    addToPage(searchArr);
+                  } else if (e.textContent == "Oldest") {
+                    addToPage(searchArr.toReversed());
+                  } else if (e.textContent == "A - Z") {
+                    addToPage(
+                      searchArr.toSorted(function (a, b) {
+                        let x = a.content.toLowerCase();
+                        let y = b.content.toLowerCase();
+                        if (x < y) {
+                          return -1;
+                        }
+                        if (x > y) {
+                          return 1;
+                        }
+                        return 0;
+                      })
+                    );
+                  } else if (e.textContent == "Z - A") {
+                    addToPage(
+                      searchArr.toSorted(function (a, b) {
+                        let x = a.content.toLowerCase();
+                        let y = b.content.toLowerCase();
+                        if (x < y) {
+                          return 1;
+                        }
+                        if (x > y) {
+                          return -1;
+                        }
+                        return 0;
+                      })
+                    );
+                  }
+                }
+              });
+            }
+          }
+        });
+      } else {
+        e.classList.remove("clicked");
+        e.style.boxShadow =
+          "3px 3px 6px 1px #1c1c1c, inset 5px 8px 10px -2px #191a1c, inset -4px -4px 7px -4px #c3c3c326";
+
+        setTimeout(() => {
+          e.style.boxShadow =
+            "4px 3px 6px 1px #1c1c1c, inset -5px -4px 10px -2px #191a1c, inset 5px 5px 7px -4px #c3c3c326";
+        }, 100);
+        filterBox.style.display = "none";
+      }
+    } else if (e.classList.contains("sort")) {
+      filterBox.style.display = "none";
+      if (sortBox.style.display == "none") {
+        e.classList.add("clicked");
+        e.style.boxShadow =
+          "3px 3px 6px 1px #1c1c1c, inset 5px 8px 10px -2px #191a1c, inset -4px -4px 7px -4px #c3c3c326";
+
+        setTimeout(() => {
+          e.style.boxShadow =
+            "4px 3px 6px 1px #1c1c1c, inset -5px -4px 10px -2px #191a1c, inset 5px 5px 7px -4px #c3c3c326";
+        }, 100);
+        sortBox.style.display = "flex";
+        sortBox.addEventListener("click", (e) => {
+          if (!e.target.classList.contains("active")) {
+            if (e.target.textContent == "Newest") {
+              [...sortBox.children].forEach((e) => {
+                e.classList.remove("active");
+              });
+              addToPage(searchArr);
+              e.target.classList.add("active");
+            } else if (e.target.textContent == "Oldest") {
+              [...sortBox.children].forEach((e) => {
+                e.classList.remove("active");
+              });
+              e.target.classList.add("active");
+              addToPage(searchArr.toReversed());
+            } else if (e.target.textContent == "A - Z") {
+              [...sortBox.children].forEach((e) => {
+                e.classList.remove("active");
+              });
+
+              addToPage(
+                searchArr.toSorted(function (a, b) {
+                  let x = a.content.toLowerCase();
+                  let y = b.content.toLowerCase();
+                  if (x < y) {
+                    return -1;
+                  }
+                  if (x > y) {
+                    return 1;
+                  }
+                  return 0;
+                })
+              );
+              e.target.classList.add("active");
+            } else if (e.target.textContent == "Z - A") {
+              [...sortBox.children].forEach((e) => {
+                e.classList.remove("active");
+              });
+              addToPage(
+                searchArr.toSorted(function (a, b) {
+                  let x = a.content.toLowerCase();
+                  let y = b.content.toLowerCase();
+                  if (x < y) {
+                    return 1;
+                  }
+                  if (x > y) {
+                    return -1;
+                  }
+                  return 0;
+                })
+              );
+              e.target.classList.add("active");
+            }
+          }
+        });
+      } else {
+        e.classList.remove("clicked");
+        e.style.boxShadow =
+          "3px 3px 6px 1px #1c1c1c, inset 5px 8px 10px -2px #191a1c, inset -4px -4px 7px -4px #c3c3c326";
+
+        setTimeout(() => {
+          e.style.boxShadow =
+            "4px 3px 6px 1px #1c1c1c, inset -5px -4px 10px -2px #191a1c, inset 5px 5px 7px -4px #c3c3c326";
+        }, 100);
+        sortBox.style.display = "none";
+      }
+    } else {
+      filterBox.style.display = "none";
+      sortBox.style.display = "none";
+    }
+  }
+}
+
+let searchArr = [];
+// async
 function notesFacilities(e) {
   [...options.children].forEach((ele) => {
     ele.classList.remove("actived");
@@ -971,52 +1695,223 @@ function notesFacilities(e) {
     e.style.boxShadow =
       "inset -5px -4px 10px -2px #191a1c, inset 5px 5px 7px -4px #c3c3c326";
   }, 100);
-  input.focus();
-  input.addEventListener("keypress", function (e) {
-    if ((input.value != "" && e.keyCode == 13) || e.code == 13) {
-      addToArray(input.value);
-      input.value = "";
+
+  if (e.classList.contains("add-note")) {
+    searchInput.style.zIndex = "-1";
+    searchInput.value = "";
+    input.focus();
+    [...sortBox.children].map((e) => {
+      if (e.classList.contains("active")) {
+        if (e.textContent == "Newest") {
+          addToPage(arr);
+        } else if (e.textContent == "Oldest") {
+          addToPage(arr.toReversed());
+        } else if (e.textContent == "A - Z") {
+          addToPage(
+            arr.toSorted(function (a, b) {
+              let x = a.content.toLowerCase();
+              let y = b.content.toLowerCase();
+              if (x < y) {
+                return -1;
+              }
+              if (x > y) {
+                return 1;
+              }
+              return 0;
+            })
+          );
+        } else if (e.textContent == "Z - A") {
+          addToPage(
+            arr.toSorted(function (a, b) {
+              let x = a.content.toLowerCase();
+              let y = b.content.toLowerCase();
+              if (x < y) {
+                return 1;
+              }
+              if (x > y) {
+                return -1;
+              }
+              return 0;
+            })
+          );
+        }
+      }
+    });
+    input.addEventListener("keypress", function (e) {
+      if (input.value != "" && (e.keyCode == 13 || e.code == 13)) {
+        addToArray(input.value);
+        input.value = "";
+      }
+    });
+  } else if (e.classList.contains("search-button")) {
+    searchInput.style.zIndex = "0";
+    input.value = "";
+    searchInput.focus();
+    if (searchInput.value != "") {
+      notesBox.innerHTML = "";
+      // let searchArr = [];
+      searchArr = [];
+      let cnt = searchInput.value;
+      arr.forEach((e) => {
+        if (e.content.toLowerCase().startsWith(cnt.toLowerCase())) {
+          searchArr.push(e);
+        }
+      });
+      [...sortBox.children].map((e) => {
+        if (e.classList.contains("active")) {
+          if (e.textContent == "Newest") {
+            addToPage(searchArr);
+          } else if (e.textContent == "Oldest") {
+            addToPage(searchArr.toReversed());
+          } else if (e.textContent == "A - Z") {
+            addToPage(
+              searchArr.toSorted(function (a, b) {
+                let x = a.content.toLowerCase();
+                let y = b.content.toLowerCase();
+                if (x < y) {
+                  return -1;
+                }
+                if (x > y) {
+                  return 1;
+                }
+                return 0;
+              })
+            );
+          } else if (e.textContent == "Z - A") {
+            addToPage(
+              searchArr.toSorted(function (a, b) {
+                let x = a.content.toLowerCase();
+                let y = b.content.toLowerCase();
+                if (x < y) {
+                  return 1;
+                }
+                if (x > y) {
+                  return -1;
+                }
+                return 0;
+              })
+            );
+          }
+        }
+      });
     }
-  });
-  // if (e.classList.contains("add-note")) {
-  //   input.addEventListener("keypress", function (e) {
-  //     addToPage(arr);
-  //     if ((input.value != "" && e.keyCode == 13) || e.code == 13) {
-  //       addToArray(input.value);
-  //       input.value = "";
-  //     }
-  //   });
-  // } else if (e.classList.contains("search-button")) {
-  //   let searchArr = [];
-  //   input.addEventListener("input", function () {
-  //     if (e.code != 13 && input.value != "") {
-  //       notesBox.innerHTML = "";
-  //       let cnt = [...input.value];
-  //       arr.forEach((e) => {
-  //         if (e.content[0].toLowerCase() == cnt[0].toLowerCase()) {
-  //           searchArr.push(e);
-  //         }
-  //       });
-  //       addToPage(searchArr);
-  //     } else {
-  //       searchArr = [];
-  //       addToPage(arr);
-  //     }
-  //   });
-  // }
+
+    [...sortBox.children].map((e) => {
+      if (e.classList.contains("active")) {
+        if (e.textContent == "Newest") {
+          addToPage(arr);
+        } else if (e.textContent == "Oldest") {
+          addToPage(arr.toReversed());
+        } else if (e.textContent == "A - Z") {
+          addToPage(
+            arr.toSorted(function (a, b) {
+              let x = a.content.toLowerCase();
+              let y = b.content.toLowerCase();
+              if (x < y) {
+                return -1;
+              }
+              if (x > y) {
+                return 1;
+              }
+              return 0;
+            })
+          );
+        } else if (e.textContent == "Z - A") {
+          addToPage(
+            arr.toSorted(function (a, b) {
+              let x = a.content.toLowerCase();
+              let y = b.content.toLowerCase();
+              if (x < y) {
+                return 1;
+              }
+              if (x > y) {
+                return -1;
+              }
+              return 0;
+            })
+          );
+        }
+      }
+    });
+
+    searchInput.addEventListener("input", function () {
+      notesBox.innerHTML = "";
+      // let searchArr = [];
+      searchArr = [];
+      let cnt = searchInput.value;
+      arr.forEach((e) => {
+        if (e.content.toLowerCase().startsWith(cnt.toLowerCase())) {
+          searchArr.push(e);
+        }
+      });
+      [...sortBox.children].map((e) => {
+        if (e.classList.contains("active")) {
+          if (e.textContent == "Newest") {
+            addToPage(searchArr);
+          } else if (e.textContent == "Oldest") {
+            addToPage(searchArr.toReversed());
+          } else if (e.textContent == "A - Z") {
+            addToPage(
+              searchArr.toSorted(function (a, b) {
+                let x = a.content.toLowerCase();
+                let y = b.content.toLowerCase();
+                if (x < y) {
+                  return -1;
+                }
+                if (x > y) {
+                  return 1;
+                }
+                return 0;
+              })
+            );
+          } else if (e.textContent == "Z - A") {
+            addToPage(
+              searchArr.toSorted(function (a, b) {
+                let x = a.content.toLowerCase();
+                let y = b.content.toLowerCase();
+                if (x < y) {
+                  return 1;
+                }
+                if (x > y) {
+                  return -1;
+                }
+                return 0;
+              })
+            );
+          }
+        }
+      });
+    });
+  }
 }
 
-// function searchNote(e) {
-//   [...options.children].forEach((ele) => {
-//     ele.classList.remove("actived");
-//   });
-//   e.classList.add("actived");
-//   e.style.boxShadow =
-//     "inset 5px 8px 10px -2px #191a1c, inset -4px -4px 7px -4px #c3c3c326";
+//===============================================================================================
+//===============================================================================================
+//===============================================================================================
+//===============================================================================================
+//===============================================================================================
+//===============================================================================================
+//===============================================================================================
+//===============================================================================================
 
-//   setTimeout(() => {
-//     e.style.boxShadow =
-//       "inset -5px -4px 10px -2px #191a1c, inset 5px 5px 7px -4px #c3c3c326";
-//   }, 100);
-//   input.focus();
+// function noData() {
+//   if (addNote.classList.contains("actived")) {
+//     if (arr.length == 0) {
+//       notesBox.innerHTML = '<h4 class="none">No Notes To Show</h4>';
+//       notesBox.style.display = "block";
+//       notesBox.style.overflow = "visible";
+//     } else {
+//       notesBox.style.display = "grid";
+//       notesBox.style.overflow = "scroll";
+//     }
+//   } else {
+//     if (searchArr.length == 0) {
+//       notesBox.innerHTML = '<h4 class="none">No Notes To Show</h4>';
+//       notesBox.style.display = "block";
+//       notesBox.style.overflow = "visible";
+//     } else {
+//       notesBox.style.display = "grid";
+//       notesBox.style.overflow = "scroll";
+//     }
+//   }
 // }
