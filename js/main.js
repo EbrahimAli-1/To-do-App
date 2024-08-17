@@ -8,6 +8,8 @@ let addNote = document.querySelector(".add-note");
 let search = document.querySelector(".search-button");
 let arr = [];
 
+// localStorage.clear();
+
 if (localStorage.getItem("notes")) {
   arr = JSON.parse(localStorage.getItem("notes"));
   addToPage(arr);
@@ -16,46 +18,21 @@ if (localStorage.getItem("notes")) {
 // noData()
 
 options.addEventListener("click", (e) => {
-  // if (e.target.classList.contains("add-note")) {
-  addToPage(arr)
+  addToPage(arr);
   notesFacilities(e.target);
-  // }
-  // else if (e.target.classList.contains("search-button")) {
-  //   addNewNote(e.target);
-  //   searchNote(e.target);
-  // }
 });
 
 control.addEventListener("click", (e) => {
   if (e.target.classList.contains("input")) {
-    if (addNote.classList.contains("actived")) {
-      e.target.addEventListener("keypress", function (e) {
-        if ((input.value != "" && e.keyCode == 13) || e.code == 13) {
-          addToArray(input.value);
-          input.value = "";
+    e.target.addEventListener("keypress", function (e) {
+      if ((input.value != "" && e.keyCode == 13) || e.code == 13) {
+        addToArray(input.value);
+        input.value = "";
 
-          // notesBox.style.display = "grid"
-          // notesBox.style.overflow = "scroll"
-        }
-      });
-    } else if (search.classList.contains("actived")) {
-      let searchArr = [];
-      input.addEventListener("input", function () {
-        if (e.code != 13 && input.value != "") {
-          notesBox.innerHTML = "";
-          let cnt = input.value;
-          arr.forEach((e) => {
-            if (e.content[0].toLowerCase() == cnt[0].toLowerCase()) {
-              searchArr.push(e);
-            }
-          });
-          addToPage(searchArr);
-        } else {
-          searchArr = [];
-          addToPage(arr);
-        }
-      });
-    }
+        // notesBox.style.display = "grid"
+        // notesBox.style.overflow = "scroll"
+      }
+    });
 
     filterBox.style.display = "none";
     sortBox.style.display = "none";
@@ -66,8 +43,8 @@ control.addEventListener("click", (e) => {
 
 notesBox.addEventListener("click", (e) => {
   removeElement(e);
-
   checkElement(e);
+  editElement(e);
 
   filterBox.style.display = "none";
   sortBox.style.display = "none";
@@ -92,7 +69,7 @@ function addToLocalStorage(arr) {
 function addToPage(arr) {
   notesBox.innerHTML = "";
 
-  arr.forEach((text) => {
+  arr.forEach((text, ind) => {
     [...filterBox.children].forEach((e) => {
       if (e.classList.contains("active")) {
         if (e.textContent == "All") {
@@ -123,9 +100,11 @@ function addToPage(arr) {
                           </g>
                         </svg>`;
           noteBox.appendChild(check);
-          let note = document.createElement("p");
+          let note = document.createElement("input");
+          note.type = "text";
+          note.setAttribute("readonly", "");
           note.className = "note";
-          note.textContent = text.content;
+          note.value = text.content;
           noteBox.appendChild(note);
           let buttons = document.createElement("div");
           buttons.className = "buttons";
@@ -226,9 +205,11 @@ function addToPage(arr) {
                           </g>
                         </svg>`;
           noteBox.appendChild(check);
-          let note = document.createElement("p");
+          let note = document.createElement("input");
+          note.type = "text";
+          note.setAttribute("readonly", "");
           note.className = "note";
-          note.textContent = text.content;
+          note.value = text.content;
           noteBox.appendChild(note);
           let buttons = document.createElement("div");
           buttons.className = "buttons";
@@ -330,9 +311,11 @@ function addToPage(arr) {
                           </g>
                         </svg>`;
           noteBox.appendChild(check);
-          let note = document.createElement("p");
+          let note = document.createElement("input");
+          note.type = "text";
+          note.setAttribute("readonly", "");
           note.className = "note";
-          note.textContent = text.content;
+          note.value = text.content;
           noteBox.appendChild(note);
           let buttons = document.createElement("div");
           buttons.className = "buttons";
@@ -426,7 +409,7 @@ function checkElement(e) {
       }, 100);
 
       arr.map(function (ele) {
-        if (ele.content == e.target.parentElement.children[1].textContent) {
+        if (ele.content == e.target.parentElement.children[1].value) {
           ele.check = "checked";
           addToLocalStorage(arr);
         }
@@ -444,7 +427,7 @@ function checkElement(e) {
       e.target.children[0].classList.remove("checked");
       e.target.parentElement.style.backgroundColor = "#1e81f1";
       arr.map(function (ele) {
-        if (ele.content == e.target.parentElement.children[1].textContent) {
+        if (ele.content == e.target.parentElement.children[1].value) {
           ele.check = "unchecked";
           addToLocalStorage(arr);
         }
@@ -467,8 +450,7 @@ function checkElement(e) {
       }, 100);
       arr.map(function (ele) {
         if (
-          ele.content ==
-          e.target.parentElement.parentElement.children[1].textContent
+          ele.content == e.target.parentElement.parentElement.children[1].value
         ) {
           ele.check = "checked";
           addToLocalStorage(arr);
@@ -487,8 +469,7 @@ function checkElement(e) {
       e.target.parentElement.parentElement.style.backgroundColor = "#1e81f1";
       arr.map(function (ele) {
         if (
-          ele.content ==
-          e.target.parentElement.parentElement.children[1].textContent
+          ele.content == e.target.parentElement.parentElement.children[1].value
         ) {
           ele.check = "unchecked";
           addToLocalStorage(arr);
@@ -523,7 +504,7 @@ function checkElement(e) {
         if (
           ele.content ==
           e.target.parentElement.parentElement.parentElement.parentElement
-            .children[1].textContent
+            .children[1].value
         ) {
           ele.check = "checked";
           addToLocalStorage(arr);
@@ -546,7 +527,7 @@ function checkElement(e) {
         if (
           ele.content ==
           e.target.parentElement.parentElement.parentElement.parentElement
-            .children[1].textContent
+            .children[1].value
         ) {
           ele.check = "unchecked";
           addToLocalStorage(arr);
@@ -583,19 +564,127 @@ function openOptions(e) {
               e.classList.remove("active");
             });
             e.target.classList.add("active");
-            addToPage(arr);
+            [...sortBox.children].map((e) => {
+              if (e.classList.contains("active")) {
+                if (e.textContent == "Newest") {
+                  addToPage(arr);
+                } else if (e.textContent == "Oldest") {
+                  addToPage(arr.toReversed());
+                } else if (e.textContent == "A - Z") {
+                  addToPage(
+                    arr.toSorted(function (a, b) {
+                      let x = a.content.toLowerCase();
+                      let y = b.content.toLowerCase();
+                      if (x < y) {
+                        return -1;
+                      }
+                      if (x > y) {
+                        return 1;
+                      }
+                      return 0;
+                    })
+                  );
+                } else if (e.textContent == "Z - A") {
+                  addToPage(
+                    arr.toSorted(function (a, b) {
+                      let x = a.content.toLowerCase();
+                      let y = b.content.toLowerCase();
+                      if (x < y) {
+                        return 1;
+                      }
+                      if (x > y) {
+                        return -1;
+                      }
+                      return 0;
+                    })
+                  );
+                }
+              }
+            });
           } else if (e.target.textContent == "Checked") {
             [...filterBox.children].forEach((e) => {
               e.classList.remove("active");
             });
             e.target.classList.add("active");
-            addToPage(arr);
+            [...sortBox.children].map((e) => {
+              if (e.classList.contains("active")) {
+                if (e.textContent == "Newest") {
+                  addToPage(arr);
+                } else if (e.textContent == "Oldest") {
+                  addToPage(arr.toReversed());
+                } else if (e.textContent == "A - Z") {
+                  addToPage(
+                    arr.toSorted(function (a, b) {
+                      let x = a.content.toLowerCase();
+                      let y = b.content.toLowerCase();
+                      if (x < y) {
+                        return -1;
+                      }
+                      if (x > y) {
+                        return 1;
+                      }
+                      return 0;
+                    })
+                  );
+                } else if (e.textContent == "Z - A") {
+                  addToPage(
+                    arr.toSorted(function (a, b) {
+                      let x = a.content.toLowerCase();
+                      let y = b.content.toLowerCase();
+                      if (x < y) {
+                        return 1;
+                      }
+                      if (x > y) {
+                        return -1;
+                      }
+                      return 0;
+                    })
+                  );
+                }
+              }
+            });
           } else if (e.target.textContent == "Unchecked") {
             [...filterBox.children].forEach((e) => {
               e.classList.remove("active");
             });
             e.target.classList.add("active");
-            addToPage(arr);
+            [...sortBox.children].map((e) => {
+              if (e.classList.contains("active")) {
+                if (e.textContent == "Newest") {
+                  addToPage(arr);
+                } else if (e.textContent == "Oldest") {
+                  addToPage(arr.toReversed());
+                } else if (e.textContent == "A - Z") {
+                  addToPage(
+                    arr.toSorted(function (a, b) {
+                      let x = a.content.toLowerCase();
+                      let y = b.content.toLowerCase();
+                      if (x < y) {
+                        return -1;
+                      }
+                      if (x > y) {
+                        return 1;
+                      }
+                      return 0;
+                    })
+                  );
+                } else if (e.textContent == "Z - A") {
+                  addToPage(
+                    arr.toSorted(function (a, b) {
+                      let x = a.content.toLowerCase();
+                      let y = b.content.toLowerCase();
+                      if (x < y) {
+                        return 1;
+                      }
+                      if (x > y) {
+                        return -1;
+                      }
+                      return 0;
+                    })
+                  );
+                }
+              }
+            });
           }
         }
       });
@@ -635,11 +724,6 @@ function openOptions(e) {
               e.classList.remove("active");
             });
             e.target.classList.add("active");
-            // let reflectedArr = [];
-            // arr.forEach((e) => {
-            //   reflectedArr.unshift(e)
-            // })
-            // addToPage(reflectedArr)
             addToPage(arr.toReversed());
           } else if (e.target.textContent == "A - Z") {
             [...sortBox.children].forEach((e) => {
@@ -701,44 +785,179 @@ function openOptions(e) {
 function removeElement(e) {
   let cnt;
   if (e.target.classList.contains("remove")) {
-    cnt = e.target.parentElement.parentElement.children[1].textContent;
+    cnt = e.target.parentElement.parentElement.children[1].value;
 
-    e.target.parentElement.parentElement.remove();
     delNote(cnt);
   } else if (e.target.parentElement.classList.contains("remove")) {
-    cnt =
-      e.target.parentElement.parentElement.parentElement.children[1]
-        .textContent;
+    cnt = e.target.parentElement.parentElement.parentElement.children[1].value;
 
-    e.target.parentElement.parentElement.parentElement.remove();
     delNote(cnt);
   } else if (
     e.target.parentElement.parentElement.classList.contains("remove")
   ) {
     cnt =
       e.target.parentElement.parentElement.parentElement.parentElement
-        .children[1].textContent;
+        .children[1].value;
 
-    e.target.parentElement.parentElement.parentElement.parentElement.remove();
     delNote(cnt);
   }
 }
 
 function delNote(cnt) {
   arr = arr.filter((task) => task.content != cnt);
-  addToLocalStorage(arr);
+  [...sortBox.children].map((e) => {
+    if (e.classList.contains("active")) {
+      if (e.textContent == "Newest") {
+        addToLocalStorage(arr);
+        addToPage(arr);
+      } else if (e.textContent == "Oldest") {
+        addToLocalStorage(arr);
+        addToPage(arr.toReversed());
+      } else if (e.textContent == "A - Z") {
+        addToLocalStorage(arr);
+        addToPage(
+          arr.toSorted(function (a, b) {
+            let x = a.content.toLowerCase();
+            let y = b.content.toLowerCase();
+            if (x < y) {
+              return -1;
+            }
+            if (x > y) {
+              return 1;
+            }
+            return 0;
+          })
+        );
+      } else if (e.textContent == "Z - A") {
+        addToLocalStorage(arr);
+        addToPage(
+          arr.toSorted(function (a, b) {
+            let x = a.content.toLowerCase();
+            let y = b.content.toLowerCase();
+            if (x < y) {
+              return 1;
+            }
+            if (x > y) {
+              return -1;
+            }
+            return 0;
+          })
+        );
+      }
+    }
+  });
 }
 
-function noData() {
-  if (arr.length == 0) {
-    notesBox.innerHTML = '<h4 class="none">No Notes To Show</h4>';
-    notesBox.style.display = "block";
-    notesBox.style.overflow = "visible";
-  } else {
-    notesBox.style.display = "grid";
-    notesBox.style.overflow = "scroll";
+function editElement(e) {
+  if (e.target.classList.contains("edit")) {
+    let note = e.target.parentElement.parentElement.children[1];
+    note.removeAttribute("readonly");
+    note.focus();
+    // note.style.backgroundColor = "#789ccf";
+    let noteValue = note.value;
+    note.addEventListener("keypress", function (e) {
+      if (e.code == 13 || e.keyCode == 13) {
+        note.blur();
+      }
+    });
+    note.onblur = function () {
+      note.setAttribute("readonly", "");
+      note.style.backgroundColor = "transparent";
+      arr.map((e) => {
+        if (e.content == noteValue) {
+          e.content = note.value;
+        }
+      });
+      addToLocalStorage(arr);
+      addToPage(arr);
+    };
+  } else if (e.target.parentElement.classList.contains("edit")) {
+    let note = e.target.parentElement.parentElement.parentElement.children[1];
+    note.removeAttribute("readonly");
+    note.focus();
+    // note.style.backgroundColor = "#789ccf";
+    let noteValue = note.value;
+    note.addEventListener("keypress", function (e) {
+      if (e.code == 13 || e.keyCode == 13) {
+        note.blur();
+      }
+    });
+    note.onblur = function () {
+      note.setAttribute("readonly", "");
+      note.style.backgroundColor = "transparent";
+      arr.map((e) => {
+        if (e.content == noteValue) {
+          e.content = note.value;
+        }
+      });
+      addToLocalStorage(arr);
+      addToPage(arr);
+    };
+  } else if (e.target.parentElement.parentElement.classList.contains("edit")) {
+    let note =
+      e.target.parentElement.parentElement.parentElement.parentElement
+        .children[1];
+    note.removeAttribute("readonly");
+    note.focus();
+    // note.style.backgroundColor = "#789ccf";
+    let noteValue = note.value;
+    note.addEventListener("keypress", function (e) {
+      if (e.code == 13 || e.keyCode == 13) {
+        note.blur();
+      }
+    });
+    note.onblur = function () {
+      note.setAttribute("readonly", "");
+      note.style.backgroundColor = "transparent";
+      arr.map((e) => {
+        if (e.content == noteValue) {
+          e.content = note.value;
+        }
+      });
+      addToLocalStorage(arr);
+      addToPage(arr);
+    };
+  } else if (
+    e.target.parentElement.parentElement.parentElement.classList.contains(
+      "edit"
+    )
+  ) {
+    let note =
+      e.target.parentElement.parentElement.parentElement.parentElement
+        .parentElement.children[1];
+    note.removeAttribute("readonly");
+    note.focus();
+    // note.style.backgroundColor = "#789ccf";
+    let noteValue = note.value;
+    note.addEventListener("keypress", function (e) {
+      if (e.code == 13 || e.keyCode == 13) {
+        note.blur();
+      }
+    });
+    note.onblur = function () {
+      note.setAttribute("readonly", "");
+      note.style.backgroundColor = "transparent";
+      arr.map((e) => {
+        if (e.content == noteValue) {
+          e.content = note.value;
+        }
+      });
+      addToLocalStorage(arr);
+      addToPage(arr);
+    };
   }
 }
+
+// function noData() {
+//   if (arr.length == 0) {
+//     notesBox.innerHTML = '<h4 class="none">No Notes To Show</h4>';
+//     notesBox.style.display = "block";
+//     notesBox.style.overflow = "visible";
+//   } else {
+//     notesBox.style.display = "grid";
+//     notesBox.style.overflow = "scroll";
+//   }
+// }
 
 function notesFacilities(e) {
   [...options.children].forEach((ele) => {
@@ -753,6 +972,12 @@ function notesFacilities(e) {
       "inset -5px -4px 10px -2px #191a1c, inset 5px 5px 7px -4px #c3c3c326";
   }, 100);
   input.focus();
+  input.addEventListener("keypress", function (e) {
+    if ((input.value != "" && e.keyCode == 13) || e.code == 13) {
+      addToArray(input.value);
+      input.value = "";
+    }
+  });
   // if (e.classList.contains("add-note")) {
   //   input.addEventListener("keypress", function (e) {
   //     addToPage(arr);
