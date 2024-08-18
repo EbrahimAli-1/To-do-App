@@ -27,8 +27,14 @@ control.addEventListener("click", (e) => {
   if (e.target.classList.contains("input")) {
     e.target.addEventListener("keypress", function (e) {
       if (input.value != "" && (e.keyCode == 13 || e.code == 13)) {
+        // arr.map((e) => {
+        //   if (e.content == input.value) {
+        //     window.alert("already exist");
+        //   } else {
         addToArray(input.value);
         input.value = "";
+        //   }
+        // });
 
         // notesBox.style.display = "grid"
         // notesBox.style.overflow = "scroll"
@@ -1739,8 +1745,14 @@ function notesFacilities(e) {
     });
     input.addEventListener("keypress", function (e) {
       if (input.value != "" && (e.keyCode == 13 || e.code == 13)) {
+        // arr.map((e) => {
+        //   if (e.content == input.value) {
+        //     window.alert("already exist");
+        //   } else {
         addToArray(input.value);
         input.value = "";
+        //   }
+        // });
       }
     });
   } else if (e.classList.contains("search-button")) {
